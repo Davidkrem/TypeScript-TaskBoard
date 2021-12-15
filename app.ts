@@ -18,13 +18,23 @@ class Project {
 
 //custom type Listener
 
-type Listener = (items: Project[]) => void;
-class ProjectState {
-  private listeners: Listener[] = [];
+type Listener<T> = (items: T[]) => void;
+
+class State<T> {
+  protected listeners: Listener<T>[] = [];
+
+  addListener(listenerFn: Listener<T>) {
+    this.listeners.push(listenerFn);
+  }
+}
+
+class ProjectState extends State<Project> {
   private projects: Project[] = [];
   private static instance: ProjectState;
 
-  private constructor() {}
+  private constructor() {
+    super();
+  }
 
   static getInstance() {
     if (this.instance) {
@@ -32,14 +42,6 @@ class ProjectState {
     }
     this.instance = new ProjectState();
     return this.instance;
-  }
-
-  addListener(listenerFn: Listener) {
-    this.listeners.push(listenerFn);
-    for (const listenerFn of this.listeners) {
-      //making copy of the array
-      listenerFn(this.projects.slice());
-    }
   }
 
   addProject(title: string, description: string, numOfPeople: number) {
@@ -51,6 +53,9 @@ class ProjectState {
       ProjectStatus.Active
     );
     this.projects.push(newProject);
+    for (const listenerFn of this.listeners) {
+      listenerFn(this.projects.slice());
+    }
   }
 }
 
@@ -119,32 +124,61 @@ function autobind(_: any, _2: string, descriptor: PropertyDescriptor) {
   return adjDescriptor;
 }
 
-//ProjectList Class to work with 'project list template HTML'
-class ProjectList {
-  //My Fields
+//Component Base Class
+abstract class Component<T extends HTMLElement, U extends HTMLElement> {
   templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLElement; // for the section element
-  assignedProjects: Project[];
-  constructor(private type: 'active' | 'finished') {
-    //telling typscript that this element will never be null with !
-    this.templateElement = document.querySelector(
-      '#project-list'
-      //using casting to HTMLTemplateElement
-    )! as HTMLTemplateElement;
-    this.hostElement = document.querySelector('#app') as HTMLDivElement;
-    this.assignedProjects = [];
+  hostElement: T;
+  element: U;
 
-    //render the form
-    //giving reference to the template element
+  constructor(
+    templateId: string,
+    hostElementId: string,
+    insertAtStart: boolean,
+    newElementId?: string
+  ) {
+    this.templateElement = document.getElementById(
+      templateId
+    )! as HTMLTemplateElement;
+    this.hostElement = document.getElementById(hostElementId)! as T;
     const importedNode = document.importNode(
       this.templateElement.content,
       true
     );
-    this.element = importedNode.firstElementChild as HTMLElement;
+    this.element = importedNode.firstElementChild as U;
     //active and innactive project lists
-    this.element.id = `${this.type}-projects`;
+    if (newElementId) {
+      this.element.id = newElementId;
+    }
+    this.attach(insertAtStart);
+  }
+  private attach(insertAtBeginning: boolean) {
+    this.hostElement.insertAdjacentElement(
+      insertAtBeginning ? 'afterbegin' : 'beforeend',
+      this.element
+    );
+  }
+  abstract configure(): void;
+  abstract renderContent(): void;
+}
 
+//ProjectList Class to work with 'project list template HTML'
+class ProjectList extends Component<HTMLDivElement, HTMLElement> {
+  assignedProjects: Project[];
+  constructor(private type: 'active' | 'finished') {
+    super('project-list', 'app', false, `${type}-projects`);
+    this.assignedProjects = [];
+
+    this.configure();
+    this.renderContent();
+  }
+  renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.element.querySelector('ul')!.id = listId;
+    this.element.querySelector('h2')!.textContent =
+      //'active | finished'
+      this.type.toUpperCase() + ' PROJECTS';
+  }
+  configure() {
     projectState.addListener((projects: Project[]) => {
       const relevantProjects = projects.filter((prj) => {
         if (this.type === 'active') {
@@ -155,9 +189,6 @@ class ProjectList {
       this.assignedProjects = relevantProjects;
       this.renderProjects();
     });
-
-    this.attach();
-    this.renderContent();
   }
 
   private renderProjects() {
@@ -171,42 +202,17 @@ class ProjectList {
       listEl?.appendChild(listItem);
     }
   }
-
   // ! to rule out null case
-  private renderContent() {
-    const listId = `${this.type}-projects-list`;
-    this.element.querySelector('ul')!.id = listId;
-    this.element.querySelector('h2')!.textContent =
-      //'active | finished'
-      this.type.toUpperCase() + ' PROJECTS';
-  }
-
-  private attach() {
-    this.hostElement.insertAdjacentElement('beforeend', this.element);
-  }
 }
 
 //ProjectInput Classs to work with 'project input template HTML'
-class ProjectInput {
-  //My Fields
-  templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLFormElement;
+class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   titleInputElement: HTMLInputElement;
   descriptionInputElement: HTMLInputElement;
   peopleInputElement: HTMLInputElement;
 
   constructor() {
-    this.templateElement = document.querySelector(
-      '#project-input'
-    )! as HTMLTemplateElement;
-    this.hostElement = document.querySelector('#app')! as HTMLDivElement;
-    const importedNode = document.importNode(
-      this.templateElement.content,
-      true
-    );
-    this.element = importedNode.firstElementChild as HTMLFormElement;
-    this.element.id = 'user-input';
+    super('project-input', 'app', true, 'user-input');
     //get access to different elements and store as properties
     this.titleInputElement = this.element.querySelector(
       '#title'
@@ -217,10 +223,16 @@ class ProjectInput {
     this.peopleInputElement = this.element.querySelector(
       '#people'
     ) as HTMLInputElement;
+
     //attaching the form to the DOM
     this.configure();
-    this.attach();
   }
+  configure() {
+    //configure the form. bind to preconfigured event
+    this.element.addEventListener('submit', this.submitHandler);
+  }
+  renderContent() {}
+
   //PRIVATE METHODS
   //using private methods to keep it isolated to this class
   //using a TUPLE to limit the number of parameters and types
@@ -281,16 +293,6 @@ class ProjectInput {
       projectState.addProject(title, desc, people);
       this.clearInputs();
     }
-  }
-
-  private configure() {
-    //configure the form. bind to preconfigured event
-    this.element.addEventListener('submit', this.submitHandler);
-  }
-
-  //reaching out to the DOM
-  private attach() {
-    this.hostElement.insertAdjacentElement('afterbegin', this.element);
   }
 }
 //recompiling the app.ts here and run it.
