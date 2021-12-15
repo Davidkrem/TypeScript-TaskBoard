@@ -4,6 +4,7 @@
 
 html {
   font-family: sans-serif;
+  background: url('https://inspirationfeed.com/wp-content/uploads/2015/04/blurred-background.jpg');
 }
 
 body {
@@ -91,7 +92,6 @@ button:active {
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.26);
   padding: 1rem;
   margin: 1rem;
-  
 }
 
 .projects li h2 {
