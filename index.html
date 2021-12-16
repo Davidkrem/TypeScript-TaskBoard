@@ -7,16 +7,20 @@
 
     <title>Project TaskBoard</title>
     <link rel="stylesheet" href="app.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,400;0,500;1,200&display=swap" rel="stylesheet">
     <script type="module" src="dist/bundle.js" ></script>
   </head>
   <body>
     <template id="project-input">
       <form>
+        <div class="TaskBoard">Project TaskBoard</div>
         <div class="form-control">
-          <label for="title">Code Project TaskBoard</label>
+          <label for="title">Project</label>
           <input type="text" id="title" />
         </div>
-        <div class="form-control">
+        <div class="form-control desc">
           <label for="description">Description</label>
           <textarea id="description" rows="3"></textarea>
         </div>

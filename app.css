@@ -1,14 +1,34 @@
 * {
   box-sizing: border-box;
 }
-
 html {
   font-family: sans-serif;
-  background: url('https://inspirationfeed.com/wp-content/uploads/2015/04/blurred-background.jpg');
+  background: url('/backgroundBlur.jpg');
+  font-family: 'Nunito', sans-serif;
 }
 
 body {
   margin: 0;
+  background-color: rgb(0 0 0 / 31%);
+  border-radius: 5px;
+  text-align: center;
+  line-height: 1;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  max-width: 45%;
+  max-height: 50%;
+  padding: 28px 28px;
+  margin-left: 25%;
+  margin-top: 4%;
+  border-radius: 5px;
+  /* opacity: .8; */
+  opacity: 0.9;
+}
+
+.TaskBoard {
+  font-size: 30px;
+  font-weight: 700;
+  /* margin-bottom: 13px; */
 }
 
 label,
@@ -19,7 +39,11 @@ textarea {
 }
 
 label {
-  font-weight: bold;
+  font-weight: 400;
+  letter-spacing: 1px;
+  /* margin: 17px; */
+  font-size: 18px;
+  margin-top: 36px;
 }
 
 input,
@@ -34,16 +58,20 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none;
-  background: #fff5f9;
+  background: #f5f0f0;
 }
 
 button {
   font: inherit;
-  background: #ff0062;
-  border: 1px solid #ff0062;
+  background: #7e939d;
+  border: 1px solid #9e9e9e;
   cursor: pointer;
   color: white;
   padding: 0.75rem 1rem;
+  border-radius: 2px;
+  letter-spacing: 1.5px;
+  font-size: 14px;
+  margin: 13px;
 }
 
 button:focus {
@@ -52,21 +80,24 @@ button:focus {
 
 button:hover,
 button:active {
-  background: #a80041;
-  border-color: #a80041;
+  background: rgb(175, 172, 172);
+  mix-blend-mode: darken;
+  border-color: #0f0d0e;
 }
 
 .projects {
   margin: 1rem;
-  border: 1px solid #ff0062;
+  border: 1px solid #607d8b;
 }
 
 .projects header {
-  background: #ff0062;
+  background: #2c97c7;
   height: 3.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 0px;
+  opacity: 0.7;
 }
 
 #finished-projects {
@@ -74,12 +105,15 @@ button:active {
 }
 
 #finished-projects header {
-  background: #0044ff;
+  background: #009688;
+  opacity: 0.7;
 }
 
 .projects h2 {
   margin: 0;
   color: white;
+  letter-spacing: 1.5px;
+  font-size: 18px;
 }
 
 .projects ul {
@@ -92,20 +126,23 @@ button:active {
   box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.26);
   padding: 1rem;
   margin: 1rem;
+  background: white;
 }
 
 .projects li h2 {
-  color: #ff0062;
+  color: black;
   margin: 0.5rem 0;
+  font-size: 21px;
+  letter-spacing: 0.7px;
 }
 
 #finished-projects li h2 {
-  color: #0044ff;
+  color: #060606;
 }
 
 .projects li h3 {
-  color: #575757;
-  font-size: 1rem;
+  color: #606060;
+  font-size: 15px;
 }
 
 .project li p {
@@ -113,16 +150,24 @@ button:active {
 }
 
 .droppable {
-  background: #ffe3ee;
+  background: #03a9f43b;
 }
 
 #finished-projects .droppable {
-  background: #d6e1ff;
+  background: #2bc7b830;
 }
 
 #user-input {
   margin: 1rem;
-  padding: 1rem;
-  border: 1px solid #ff0062;
-  background: #f7f7f7;
+  padding: 2rem;
+  /* border: 1px solid #607d8b; */
+  background: white;
+  border-radius: 2px;
+}
+
+.desc {
+  font-size: 14px;
+  letter-spacing: 1.4px;
+  font-weight: 500;
+  color: black;
 }
