@@ -1,5 +1,6 @@
-# TaskBoard Drag & Drop 
-### Built with TypeScript to organize project todos.
+# TaskBoard 
+#### A Drag and Drop desktop app built with TypeScript
+![Screenshot](TaskBoard.png)
 
 ## Technologies used 🛠️
 - [TypeScript](https://www.typescriptlang.org/)
