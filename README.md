@@ -8,7 +8,7 @@
 - [CSS](https://www.w3.org/Style/CSS/Overview.en.html)
 
 ### Stackathon Presentation Video
--coming soon
+- https://youtu.be/Gc8uQJjIxFo
 
 ### Live Demo
 -coming soon
